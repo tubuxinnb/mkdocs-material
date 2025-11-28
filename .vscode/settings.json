@@ -1,8 +1,0 @@
-{
-    "yaml.schemas": {
-        "https://squidfunk.github.io/mkdocs-material/schema.json": [
-            "mkdocs.yml",
-            "file:///Users/tubuxin/MkDocs/mkdocs.yml"
-        ]
-    }
-}

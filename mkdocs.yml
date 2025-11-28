@@ -1,5 +1,5 @@
-site_name: My MKDocs Material Documentation
-site_url: https://sitename.example
+site_name: "BuBu's Notes"
+site_url: https://tubuxinnb.github.io/mkdocs-material
 theme:
   name: material
   features:
