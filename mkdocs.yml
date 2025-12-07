@@ -2,38 +2,40 @@ site_name: "BuBu's Notes"
 site_url: https://tubuxinnb.github.io/mkdocs-material
 theme:
   name: material
-  # palette: 
-  #   - media: "(prefers-color-scheme)"
-  #     toggle:
-  #       icon: material/brightness-auto
-  #       name: Switch to light mode
-  #   # Palette toggle for light mode
-  #   - media: "(prefers-color-scheme: light)"
-  #     scheme: default
-  #     primary: blue
-  #     accent: deep purple
-  #     toggle:
-  #       icon: material/brightness-7 
-  #       name: Switch to dark mode
+  palette: 
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: deep purple
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
 
-  #   # Palette toggle for dark mode
-  #   - media: "(prefers-color-scheme: dark)"
-  #     scheme: slate
-  #     primary: indigo
-  #     accent: deep purple
-  #     toggle:
-  #       icon: material/brightness-4
-  #       name: Switch to light mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
 plugins:
   - blog:
       blog_dir: .
       # authors: false
       # post_readtime: true
       # post_excerpt: required
-  # - tags
-  # - search
+  - tags
+  - search
+  
 
 markdown_extensions:
+  - admonition
   - pymdownx.arithmatex:
       generic: true
 extra_javascript:

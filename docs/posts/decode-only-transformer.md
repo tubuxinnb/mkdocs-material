@@ -1,7 +1,7 @@
 ---
 categories:
   - mlsys
-  - note
+  - NOTE
 date:
   created: 2025-11-15
 ---

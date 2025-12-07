@@ -2,9 +2,13 @@
 date: 2025-12-01
 categories:
   - TOEFL
-  - note
+  - NOTE
 ---
 # Speaking Task 2
+
+Answer Instructions 
+
+<!-- more -->
 
 ## Reading Material
 

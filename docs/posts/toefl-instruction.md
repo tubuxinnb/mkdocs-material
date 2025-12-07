@@ -1,12 +1,15 @@
 ---
-date: 2025-12-05
+date: 
+  created: 2025-12-05
 categories:
   - TOEFL
-  - note
+  - NOTE
 ---
 # TOEFL TEST Instruction
 
-12.5最后过一遍所有为考试已经准备的内容，按考试科目顺序->题目考查方式回忆并总结一下
+12.5，最后过一遍所有为考试已经准备的内容，按考试科目顺序->题目考查方式回忆并总结一下
+
+<!-- more -->
 
 ## Reading Task
 
