@@ -1,4 +1,4 @@
-# Some Notes about  Transformer in LLM
+# Some Notes about Transformer in LLM
 
 最近想入门一下大模型的serving和inference。可能Transformer的架构是一个好的切入点。
 
