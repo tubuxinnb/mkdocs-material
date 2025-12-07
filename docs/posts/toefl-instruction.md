@@ -1,3 +1,9 @@
+---
+date: 2025-12-05
+categories:
+  - TOEFL
+  - note
+---
 # TOEFL TEST Instruction
 
 12.5最后过一遍所有为考试已经准备的内容，按考试科目顺序->题目考查方式回忆并总结一下

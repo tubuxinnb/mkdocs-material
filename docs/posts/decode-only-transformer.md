@@ -1,7 +1,17 @@
+---
+categories:
+  - mlsys
+  - note
+date:
+  created: 2025-11-15
+---
+
+
+
 # Some Notes about Transformer in LLM
 
 最近想入门一下大模型的serving和inference。可能Transformer的架构是一个好的切入点。
-
+<!-- more -->
 第一步，transformer需要将输入的prompt变成input embeddings
 
 ## 1. Tokenizer
