@@ -1,0 +1,1382 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://tubuxinnb.github.io/mkdocs-material/2025/11/15/some-notes-about-transformer-in-llm/">
+      
+      
+      
+        <link rel="next" href="../../../12/01/speaking-task-2/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Some Notes about Transformer in LLM - BuBu's Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#some-notes-about-transformer-in-llm" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="BuBu&#39;s Notes" class="md-header__button md-logo" aria-label="BuBu's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BuBu's Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Some Notes about Transformer in LLM
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="deep-purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="BuBu&#39;s Notes" class="md-nav__button md-logo" aria-label="BuBu's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    BuBu's Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Blog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Archive
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Archive
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/2025/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2025
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Categories
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Categories
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/cuda/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CUDA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPU
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/llm-inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Inference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NOTE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/phd-application/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PhD Application
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/simulation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simulation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/toefl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TOEFL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/mlsys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mlsys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-tokenizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Tokenizer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Tokenizer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optimizations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optimizations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Optimizations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RoPE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-q-k-v-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Q, K, V Calculation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Q, K, V Calculation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quantization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quantization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quantization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-principle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Principle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#floating-point-family" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Floating Point Family
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integer-family" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integer Family
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-scaled-dot-product-attention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Scaled Dot-Product Attention
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Scaled Dot-Product Attention">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#310-reshape-for-multi-head-attention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.0. Reshape for Multi-head Attention
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#311-attention-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.1. Attention Calculation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#312-head-concatenation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.2. Head Concatenation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-add-normalization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Add &amp; Normalization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Add &amp; Normalization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-residual-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1. Residual Connection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-normalization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2. Normalization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2. Normalization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#421-layer-normalization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2.1 Layer Normalization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#422-root-mean-square-rms-normalization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2.2 Root Mean Square (RMS) Normalization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-ffn-mlp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. FFN / MLP
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. FFN / MLP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-standard-ffn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1. Standard FFN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-gated-ffn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2. Gated FFN
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.2. Gated FFN">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#silu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SiLU
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-silu-in-gated-ffn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why SiLU in Gated FFN?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../.." class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                        <time datetime="2025-11-15 00:00:00+00:00" class="md-ellipsis">November 15, 2025</time>
+                      </div>
+                    </li>
+                    
+                    
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3zm3 2 4 13 3-1-4-13zM5 5v13h3V5zM3 19v2h18v-2z"/></svg>
+                          <span class="md-ellipsis">
+                            in
+                            
+                              <a href="../../../../category/mlsys/">mlsys</a>, 
+                              <a href="../../../../category/note/">NOTE</a></span>
+                        </div>
+                      </li>
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              7 min read
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+            
+          </nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+  
+
+
+
+
+<h1 id="some-notes-about-transformer-in-llm">Some Notes about Transformer in LLM</h1>
+<p>最近想入门一下大模型的serving和inference。可能Transformer的架构是一个好的切入点。</p>
+<!-- more -->
+<p>第一步，transformer需要将输入的prompt变成input embeddings</p>
+<h2 id="1-tokenizer">1. Tokenizer</h2>
+<p>word embedding uses various methods (tiktoken in Llama), while the position emdedding is different.</p>
+<p>in original Transformer, </p>
+<div class="arithmatex">\[
+PE{(t, 2i)} = \sin\left(\frac{t}{10000^{2i/d{\text{model}}}}\right)
+\]</div>
+<div class="arithmatex">\[
+PE{(t, 2i+1)} = \cos\left(\frac{t}{10000^{2i/d{\text{model}}}}\right)
+\]</div>
+<p>, where <span class="arithmatex">\(i\)</span> is the dimension position in a token, <span class="arithmatex">\(t\)</span> is the token's absolute position in the query.</p>
+<p>transformer takes the sum of <span class="arithmatex">\(\mathbf{p}_t\)</span> (Word Embedding) and  <span class="arithmatex">\(\mathbf{e}_t\)</span> (Word Embedding) as the input <span class="arithmatex">\(\mathbf{z}_t\)</span>: </p>
+<div class="arithmatex">\[
+\mathbf{z}_t = \mathbf{e}_t + \mathbf{p}_t
+\]</div>
+<h3 id="optimizations">Optimizations</h3>
+<h4 id="rope">RoPE</h4>
+<p><strong>Llama</strong> uses another kind of Position Embedding, <strong>RoPE</strong> to describe the postion, and it works on the <span class="arithmatex">\(Q \&amp; K\)</span> caculation by <strong>rotation</strong> not the input generation by addition.</p>
+<p>For a token at the absolute position <span class="arithmatex">\(m\)</span>, the rotation matrix <span class="arithmatex">\(R_m\)</span>, it will rotate every pairs <span class="arithmatex">\((q_1, q_2)\)</span> in <span class="arithmatex">\(Q_m\)</span>. the number of the pairs is <span class="arithmatex">\(d_{model}/2\)</span>, </p>
+<div class="arithmatex">\[
+Q'_m = R_mQ_m
+\]</div>
+<p>where every pair <span class="arithmatex">\((q_1, q_2)\)</span> is rotated by <span class="arithmatex">\(\theta_i\)</span>, </p>
+<div class="arithmatex">\[
+\begin{pmatrix} q'_1 \\ q'_2 \end{pmatrix} = 
+\begin{pmatrix} \cos m\theta &amp; -\sin m\theta \\ \sin m\theta &amp; \cos m\theta \end{pmatrix} \begin{pmatrix} q_1 \\ q_2 \end{pmatrix}
+\]</div>
+<p>Where the <span class="arithmatex">\(\theta\)</span> is calculated by <span class="arithmatex">\(i\)</span> and <span class="arithmatex">\(d_{model}\)</span>, <span class="arithmatex">\(\theta_i = \frac{1}{b^{2i / d}}, b = 10000\)</span></p>
+<p>Notice that there is no additional computation compared with original implementation (easy to prove).</p>
+<p>Now look into the implementation in Llama: </p>
+<pre><code class="language-python">def apply_rotary_emb(
+    xq: torch.Tensor,
+    xk: torch.Tensor,
+    freqs_cis: torch.Tensor,
+) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+    xq_ = torch.view_as_complex(xq.float().reshape(*xq.shape[:-1], -1, 2))
+    xk_ = torch.view_as_complex(xk.float().reshape(*xk.shape[:-1], -1, 2))
+    freqs_cis = reshape_for_broadcast(freqs_cis, xq_)
+    xq_out = torch.view_as_real(xq_ * freqs_cis).flatten(3)
+    xk_out = torch.view_as_real(xk_ * freqs_cis).flatten(3)
+    return xq_out.type_as(xq), xk_out.type_as(xk)
+
+</code></pre>
+<h2 id="2-q-k-v-calculation">2. Q, K, V Calculation</h2>
+<p>However we have got the input <span class="arithmatex">\(X\)</span> (shown as vector <span class="arithmatex">\(z\)</span> in Sec 1).
+The shape of <span class="arithmatex">\(X\)</span> can be defined by 2 parameters:</p>
+<ul>
+<li><span class="arithmatex">\(L\)</span>: the length of the sequence that <span class="arithmatex">\(X\)</span> represents.</li>
+<li><span class="arithmatex">\(D\)</span>: the dimension of each token in the sequence.</li>
+</ul>
+<p>We define <span class="arithmatex">\(X\)</span> as: 
+$$
+X \in \mathbb{R}^{L \times d_{\text{model}}}
+$$</p>
+<p>Now we compute the Queries, Keys and Values:
+In the self-attention mechanism, we compute the Queries, Keys and Values using 3 weight matrixes:</p>
+<p>$$
+W^Q \in \mathbb{R}^{L \times d_{\text{k}}},\
+W^K \in \mathbb{R}^{L \times d_{\text{k}}},\
+W^V \in \mathbb{R}^{L \times d_{\text{v}}}
+$$
+X will be projected into 3 subspaces to ge Q, K and V:</p>
+<div class="arithmatex">\[
+Q = XW^Q,\\
+K = XW^K,\\
+V = XW^V
+\]</div>
+<p>note: Q, K, V always have the same dimension <span class="arithmatex">\(d\)</span>.</p>
+<h3 id="quantization">Quantization</h3>
+<h4 id="basic-principle">Basic Principle</h4>
+<p>The usage of these "<span class="arithmatex">\(W\)</span>" occupies much memory bandwidth due to their data type being FP16 or FP32. So one optimization is to quantize them into integer(INT8 or INT4).</p>
+<p>The quantization is done by:
+$$
+W_{quant} = \text{clip}\left(\text{round}\left(\frac{W_{fp}}{S} + Z\right), min, max\right)
+$$
+<span class="arithmatex">\(W_{fp}\)</span>: The original high-precision weight (e.g., 16-bit float).</p>
+<p><span class="arithmatex">\(S\)</span> (Scale): A floating-point factor that determines the step size of the quantization buckets.</p>
+<p><span class="arithmatex">\(Z\)</span> (Zero Point): An integer that ensures the real value zero is exactly representable (crucial for sparsity).</p>
+<p><span class="arithmatex">\(W_{quant}\)</span>: The resulting integer index (e.g., a 4-bit integer ranging from 0 to 15, or -8 to 7).</p>
+<p>During inference, we will dequantize the quantized weight <span class="arithmatex">\(W_{quant}\)</span> back to the original floating-point weight <span class="arithmatex">\(W_{fp}\)</span> using the following formula:</p>
+<div class="arithmatex">\[
+W'_{fp} = S \times (W_{quant} - Z)
+\]</div>
+<h4 id="floating-point-family">Floating Point Family</h4>
+<p>Used primarily for Training and High-Precision Inference.
+| Data Type | Bit Width | Structure | Primary Use Case | Key Characteristics |
+| :---: | :---: | :---: | :---: | :---: |
+| <strong>FP32</strong> (Single Precision) | 32-bit | 1 Sign, 8 Exp, 23 Mantissa | <strong>Master Weights</strong> | The "Gold Standard" for accuracy. Used to store master weights during training to prevent underflow. |
+| <strong>FP16</strong> (Half Precision) | 16-bit | 1 Sign, 5 Exp, 10 Mantissa | <strong>Legacy Inference</strong> | Standard on older GPUs (Volta/Turing). <strong>Risk:</strong> Prone to overflow (values &gt; 65,504 turn to NaN) during training. |
+| <strong>BF16</strong> (Brain Float 16) | 16-bit | 1 Sign, 8 Exp, 7 Mantissa | <strong>Standard Training</strong> | Keeps the <strong>same dynamic range (Exponent) as FP32</strong> but truncates precision. Much more stable than FP16 for training. |
+| <strong>FP8</strong> (E4M3) | 8-bit | 1 Sign, 4 Exp, 3 Mantissa | <strong>Inference/Weights</strong> | Higher precision relative to range. Optimized for storing weights and activations in H100+ GPUs. |
+| <strong>FP8</strong> (E5M2) | 8-bit | 1 Sign, 5 Exp, 2 Mantissa | <strong>Training Gradients</strong> | Higher dynamic range (equivalent to FP16). Optimized for gradients which vary wildly in magnitude. |</p>
+<h4 id="integer-family">Integer Family</h4>
+<p>Used primarily for Quantized Inference to save memory and bandwidth.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Data Type</th>
+<th style="text-align: center;">Bit Width</th>
+<th style="text-align: center;">Range</th>
+<th style="text-align: center;">Primary Use Case</th>
+<th style="text-align: center;">Key Characteristics</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>INT8</strong></td>
+<td style="text-align: center;">8-bit</td>
+<td style="text-align: center;">-128 to 127</td>
+<td style="text-align: center;"><strong>Production Inference</strong></td>
+<td style="text-align: center;">The industry standard for "lossless-feeling" quantization. <strong>Supported natively by Tensor Cores.</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>INT4</strong></td>
+<td style="text-align: center;">4-bit</td>
+<td style="text-align: center;">-8 to 7</td>
+<td style="text-align: center;"><strong>Weight Storage</strong></td>
+<td style="text-align: center;">The current "sweet spot" for LLMs. Weights are stored in INT4 and dequantized on-the-fly for computation.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>INT1</strong></td>
+<td style="text-align: center;">1-bit</td>
+<td style="text-align: center;">0 or 1</td>
+<td style="text-align: center;"><strong>Experimental</strong></td>
+<td style="text-align: center;">Used in "1-bit LLMs" (e.g., BitNet). Weights are effectively ternary <span class="arithmatex">\(\{-1, 0, 1\}\)</span>. Extremely efficient but requires specialized training.</td>
+</tr>
+</tbody>
+</table>
+<p>The accuracy loss seems apparently great. But the memory savings is huge ( <span class="arithmatex">\(2-4\times\)</span>)</p>
+<h2 id="3-scaled-dot-product-attention">3. Scaled Dot-Product Attention</h2>
+<h3 id="310-reshape-for-multi-head-attention">3.1.0. Reshape for Multi-head Attention</h3>
+<p>The shape of Q and K is <span class="arithmatex">\(L \times d_k\)</span>.
+Now we reshape the Q and k to <span class="arithmatex">\(L \times h \times d_h\)</span>, where $ d_k = d_h \times h$.</p>
+<p>Note that <span class="arithmatex">\(d_h\)</span> is the hidden dimension within every token in the <span class="arithmatex">\(L\)</span> sequence.</p>
+<p>We want the computation of <span class="arithmatex">\(QK^T\)</span> to be more parallelizable and efficient. </p>
+<p>So we reshape the Q and K to <span class="arithmatex">\(h \times L \times d_h\)</span> and <span class="arithmatex">\(h \times L \times d_h\)</span>, respectively.
+No the shape of Q and K is <code>[h, L, d_h]</code> (no considering Batch Size).</p>
+<p>Now we can ensure the <span class="arithmatex">\(d_h\)</span> at fixed size: <span class="arithmatex">\(128 /256\)</span>. and parallelize the computation of <span class="arithmatex">\(QK^T\)</span> between the <span class="arithmatex">\(h\)</span> heads.</p>
+<h3 id="311-attention-calculation">3.1.1. Attention Calculation</h3>
+<p>The score is calculated as follows:
+$<span class="arithmatex">\(\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{Q K^T}{\sqrt{d_h}} + M\right)V\)</span>$
+In every head, the shape of <span class="arithmatex">\(QK^T\)</span> is <code>[L, L]</code>, and the shape of <span class="arithmatex">\(V\)</span> is <code>[L, d_h]</code>. 
+Notably the <span class="arithmatex">\(d_v\)</span> is always equal to <span class="arithmatex">\(d_k\)</span>. So now we use <span class="arithmatex">\(d\)</span> to unify <span class="arithmatex">\(d_v\)</span> and <span class="arithmatex">\(d_k\)</span>.</p>
+<p><strong>For MHA:</strong></p>
+<p>The V will be divided to <code>[h, L, d_h]</code> align with the Q and K. And the Attention Weights will be multiplied with a corresponding V in the same head.</p>
+<p><strong>For GQA:</strong></p>
+<p>To optimize the memory consumption of KV cache. GQA choose to store less heads of  <span class="arithmatex">\(K\)</span> &amp; <span class="arithmatex">\(V\)</span> and distribute them to different groups of attention weights</p>
+<p>For example, if we have 8 heads, and we want to distribute them to 2 groups. Then we will have 4 heads in each group. Instead of storing 8 heads of <span class="arithmatex">\(KV\)</span>, we will store 2 heads of <span class="arithmatex">\(KV\)</span> for 2 groups and 4 heads of <span class="arithmatex">\(Q\)</span> in each group.</p>
+<h3 id="312-head-concatenation">3.1.2. Head Concatenation</h3>
+<p>Now we have <span class="arithmatex">\(H\)</span> heads, each head <span class="arithmatex">\(i\)</span> has an attention matrix <span class="arithmatex">\(Z_i\)</span> of shape: <code>[L, d_h]</code></p>
+<p>We concatenate all heads along the last dimension <span class="arithmatex">\(d_h\)</span> into a single matrix <span class="arithmatex">\(Z\)</span> of shape: <code>[L, d]</code>, where <span class="arithmatex">\(d = d_h \times H\)</span>:</p>
+<p>$$
+Z = \text{Concat}(Z_1, Z_2, \dots, Z_h)
+$$
+Now then apply a output linear projection to <span class="arithmatex">\(Z\)</span>:</p>
+<div class="arithmatex">\[
+\text{Attention} = Z_{concat} \times W^O
+\]</div>
+<h2 id="4-add-normalization">4. Add &amp; Normalization</h2>
+<h3 id="41-residual-connection">4.1. Residual Connection</h3>
+<p>Execute Residual Connection <strong>(Add)</strong> and Layer Normalization: </p>
+<div class="arithmatex">\[X = X_{input} + \text{Attention}(X_{input})\]</div>
+<h3 id="42-normalization">4.2. Normalization</h3>
+<p>Here are 2 ways to normalize:</p>
+<h4 id="421-layer-normalization">4.2.1 Layer Normalization</h4>
+<p>For <span class="arithmatex">\(x \in X\)</span>, <span class="arithmatex">\(x\)</span> of shape<code>[d, 1]</code> is normalized by:</p>
+<p>$$
+\text{LayerNorm}(x) = \frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}}
+$$
+where <span class="arithmatex">\(\mu\)</span> is the mean of <span class="arithmatex">\(x\)</span> and <span class="arithmatex">\(\sigma^2\)</span> is the variance of <span class="arithmatex">\(x\)</span>.</p>
+<h4 id="422-root-mean-square-rms-normalization">4.2.2 Root Mean Square (RMS) Normalization</h4>
+<div class="arithmatex">\[\text{RMS}(x) = \sqrt{\frac{1}{d} \sum_{i=1}^{d} x_i^2 + \epsilon}\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Originally, Normalization was done after Attention Calculation like <span class="arithmatex">\(Attention \rightarrow Add \rightarrow Norm\)</span>. However, Nowadays, Normalization(RMS Norm) is done before Attention like <span class="arithmatex">\(Norm \rightarrow Attention \rightarrow Add\)</span>.
+The same thing will happen in FFN blocks.</p>
+</div>
+<h2 id="5-ffn-mlp">5. FFN / MLP</h2>
+<p>The defining characteristic of this block is that it is applied independently to every single token position.</p>
+<ul>
+<li>The same matrix weights (<span class="arithmatex">\(W_{up/down}, b\)</span>) are used for every token.</li>
+<li>Token <span class="arithmatex">\(i\)</span> does not interact with Token <span class="arithmatex">\(j\)</span> inside this block.</li>
+</ul>
+<p>Mathematically, if the input is a matrix <span class="arithmatex">\(X \in \mathbb{R}^{L \times d}\)</span>, the FFN operates on each row <span class="arithmatex">\(x_i\)</span> identically.</p>
+<p>The fundamental structure involves projecting the input vector into a higher-dimensional (<span class="arithmatex">\(d_{ff}\)</span>) space (Expansion), applying a non-linearity, and projecting it back (Contraction).</p>
+<h3 id="51-standard-ffn">5.1. Standard FFN</h3>
+<p>$$
+\text{FFN}(x) = \text{Activation}(x W_{up} + b_1) W_{down} + b_2
+$$
+where the <span class="arithmatex">\(d_{ff}\)</span> is usually the <span class="arithmatex">\(4 \times d\)</span></p>
+<h3 id="52-gated-ffn">5.2. Gated FFN</h3>
+<div class="arithmatex">\[
+\text{FFN}_{\text{SwiGLU}}(x) = (\text{SiLU}(x W_{gate}) \odot (x W_{up})) W_{down}
+$$
+where the $d_{ff}$ is usually the $2.6 \times d$, because there are **1 more projection weight matrixes**, engineers want to keep the number of parameters  align with the standard FFN.
+### 5.3. Activation
+#### ReLU
+Rectified Linear Unit:
+$$
+f(x) = max(0,x)
+$$
+#### GELU
+Gaussian Error Linear Unit:
+$$
+f(x) = x \cdot \Phi(x)
+$$
+Where $\Phi(x)$ is the Cumulative Distribution Function (CDF) of the Standard Normal Distribution:
+$$
+\Phi(x) = \frac{1}{2} \left[ 1 + \text{erf}\left( \frac{x}{\sqrt{2}} \right) \right]
+$$
+Approximation (Used in practice for speed):
+$$
+f(x) \approx 0.5x \left( 1 + \tanh \left[ \sqrt{\frac{2}{\pi}} \left( x + 0.044715 x^3 \right) \right] \right)
+\]</div>
+<h4 id="silu">SiLU</h4>
+<p>Swish-Gated Linear Unit:
+$$
+f(x) = x \cdot \sigma(x)
+$$
+Where <span class="arithmatex">\(\sigma(x)\)</span> is the Sigmoid function:
+$$
+\sigma(x) = \frac{1}{1 + e^{-x}}
+$$</p>
+<h4 id="why-silu-in-gated-ffn">Why SiLU in Gated FFN?</h4>
+<p>It is the <strong>"Goldilocks"</strong> function—smooth, non-linear, and computationally efficient enough to be multiplied across billions of parameters.</p>
+<p>After FFN, we apply another Add and then enter <strong>the next iteration</strong> of Attention Block:</p>
+<div class="arithmatex">\[
+x_{output} = x_{mid} + \text{FFN}( \text{RMSNorm}(x_{mid}) )
+\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>the normalization is applied <strong>before</strong> the FFN in modern transformers, while it is applied after in the original transformer paper, which is aligned with the Attention Block.</p>
+</div>
+<h2 id="summary">Summary</h2>
+<p>For decode-only transformer, here are 3 key blocks:</p>
+<ol>
+<li>token embedding</li>
+<li>attention block</li>
+<li>feed forward network block</li>
+</ol>
+<p>To be more specific, it consists of many kernels with variety of weight matrixes. 
+They are full of <code>gemm</code>  and <code>norm &amp; add</code> operations, where much optimization can be done.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": [], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../../javascripts/config.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>

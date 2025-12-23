@@ -1,0 +1,1322 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://tubuxinnb.github.io/mkdocs-material/2025/12/07/cuda-programming-guide-1/">
+      
+      
+        <link rel="prev" href="../../05/summary-of-inquiries/">
+      
+      
+        <link rel="next" href="../3-matrix-hadamard-product/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>CUDA Programming Guide-1 - BuBu's Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cuda-programming-guide-1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="BuBu&#39;s Notes" class="md-header__button md-logo" aria-label="BuBu's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BuBu's Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CUDA Programming Guide-1
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="deep-purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="BuBu&#39;s Notes" class="md-nav__button md-logo" aria-label="BuBu's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    BuBu's Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Blog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Archive
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Archive
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/2025/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2025
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Categories
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Categories
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/cuda/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CUDA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPU
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/llm-inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Inference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NOTE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/phd-application/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PhD Application
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/simulation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simulation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/toefl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TOEFL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/mlsys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mlsys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-1-introduction-and-programming-model-abstract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part 1: Introduction and Programming Model Abstract
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 1: Introduction and Programming Model Abstract">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-intro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Intro
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-programming-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Programming Model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2 Programming Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#121-heterogeneous-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2.1. Heterogeneous System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#122-gpu-hw-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2.2. GPU HW Model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.2. GPU HW Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1221-thread-block-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2.2.1 Thread block &amp; grid
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.2.1 Thread block &amp; grid">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#thread-block-clusters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Thread Block Clusters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warp-simt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warp &amp; SIMT
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#123-gpu-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2.3 GPU Memory
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.3 GPU Memory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1231-dram-memory-in-heterogeneous-systems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2.3.1 DRAM Memory in Heterogeneous Systems
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1232-gpu-on-chip-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2.3.2 GPU on-chip Memory
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.3.2 GPU on-chip Memory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caches
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1233-unified-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2.3.3 Unified Memory
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-the-cuda-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 The CUDA Platform
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3 The CUDA Platform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#131-compute-capability-cc-sm-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3.1. Compute Capability (CC) &amp; SM Versions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#132-cuda-toolkit-nv-driver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3.2. CUDA Toolkit &amp; NV Driver
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#133-parallel-thread-execution-ptx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3.3. Parallel Thread Execution (PTX)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#134-cubins-fatbins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3.4 Cubins &amp; Fatbins
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3.4 Cubins &amp; Fatbins">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1341-binary-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3.4.1. Binary Compatibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1342-ptx-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3.4.2. PTX Compatibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1343-just-in-time-compilation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3.4.3. Just-in-Time Compilation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../.." class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                        <time datetime="2025-12-07 00:00:00+00:00" class="md-ellipsis">December 7, 2025</time>
+                      </div>
+                    </li>
+                    
+                    
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3zm3 2 4 13 3-1-4-13zM5 5v13h3V5zM3 19v2h18v-2z"/></svg>
+                          <span class="md-ellipsis">
+                            in
+                            
+                              <a href="../../../../category/note/">NOTE</a>, 
+                              <a href="../../../../category/cuda/">CUDA</a></span>
+                        </div>
+                      </li>
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              5 min read
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+            
+              <ul class="md-post__meta md-nav__list">
+                <li class="md-nav__item md-nav__item--section">
+                  <div class="md-post__title">
+                    <span class="md-ellipsis">
+                      Related links
+                    </span>
+                  </div>
+                  <nav class="md-nav">
+                    <ul class="md-nav__list">
+                      
+                        
+                        
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cuda-programming-guide-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CUDA Programming Guide-2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                      
+                        
+                        
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../posts/cuda/guide-3.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    None
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                      
+                        
+                        
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../posts/cuda/guide-4.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    None
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                      
+                    </ul>
+                  </nav>
+                </li>
+              </ul>
+            
+          </nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+  
+
+
+
+
+<h1 id="cuda-programming-guide-1">CUDA Programming Guide-1</h1>
+<div class="admonition abstract">
+<p class="admonition-title">导言</p>
+<p>CUDA is a parallel computing platform and programming model that enables dramatic increases in computing performance by harnessing the power of the graphics processing unit (GPU). Wishing to learn more about CUDA, this guide is a great place to start.</p>
+</div>
+<p><a href="https://docs.nvidia.com/cuda/cuda-programming-guide/">Source link: CUDA Programming Guide</a></p>
+<!-- more -->
+
+<p>The guide is broke down into 5 primary parts: </p>
+<p>Part 1: Introduction and Programming Model Abstract </p>
+<p>Part 2: <a href="cuda/guide-2.md">Programming GPUs in CUDA</a></p>
+<p>Part 3: Advanced CUDA</p>
+<p>Part 4: CUDA Features</p>
+<p>Part 5: Technical Appendices</p>
+<p>Parts 1-3 provide a guided learning experience for developers new to CUDA, though they also provide insight and updated information useful for CUDA developers of any experience level.</p>
+<p>Parts 4 and 5 provide a wealth of information about specific features and detailed topics, and are intended to provide a curated, well-organized reference for developers neeing to know more details as they write CUDA applications.</p>
+<h2 id="part-1-introduction-and-programming-model-abstract">Part 1: Introduction and Programming Model Abstract</h2>
+<h3 id="11-intro">1.1 Intro</h3>
+<p>A GPU provides much higher <strong>instruction throughput and memory bandwidth</strong> than a CPU within a similar price and power envelope.</p>
+<p>Other computing devices, like FPGAs, are also very energy efficient, but offer much less <strong>programming flexibility</strong> than GPUs.</p>
+<p><img alt="gpu-devotes-more-transistors-to-data-processing" src="https://picgo-picbed-buxin.oss-cn-hangzhou.aliyuncs.com/picgo/gpu-devotes-more-transistors-to-data-processing.png" /></p>
+<p>Specialized library: cuBLAS, cuFFT, cuDNN, CUTLASS</p>
+<p>higher-level language: Triton, tilelang ...</p>
+<p>The <a href="https://github.com/NVIDIA/accelerated-computing-hub">NVIDIA Accelerated Computing Hub</a> contains resources, examples, and tutorials to teach GPU and CUDA computing.</p>
+<h3 id="12-programming-model">1.2 Programming Model</h3>
+<h4 id="121-heterogeneous-system">1.2.1. Heterogeneous System</h4>
+<p>Device code, kernel, kernel launch</p>
+<h4 id="122-gpu-hw-model">1.2.2. GPU HW Model</h4>
+<p>GPU = A collection of Streaming Multiprocessors (SMs)</p>
+<p>GPC = Graphics Processing Clusters = a group of SMs</p>
+<p>SM = 1 local Reg File + 1 Uni-Data Cache + multi Function Units</p>
+<p>Uni-Data Cache = shared memory + L1C, software configurable</p>
+<p><img src="https://picgo-picbed-buxin.oss-cn-hangzhou.aliyuncs.com/picgo/gpu-cpu-system-diagram-20251207153451346.png" alt="The CUDA programming model view of CPU and GPU components and connection" style="zoom:25%;" /></p>
+<h5 id="1221-thread-block-grid">1.2.2.1 Thread block &amp; grid</h5>
+<p>block: a set of threads</p>
+<p>grid: block organization, the blocks are the same size.</p>
+<p>dimension: blocks and grids include the concept of dimension.</p>
+<p>in kernel launch, a execution configuration specifies the grid an block dimensions, also the SM, stream and Cluster related params.</p>
+<p>every thread has own id, determined by the block location, grid location. And the thread could know the size of blocks and grids.</p>
+<p><strong>A block of threads are running in a single SM.</strong></p>
+<p><strong>No guarantee of scheduling between thread blocks, so no data dependency between thread blocks</strong></p>
+<p><img alt="Thread blocks scheduled on SMs" src="https://picgo-picbed-buxin.oss-cn-hangzhou.aliyuncs.com/picgo/thread-block-scheduling.png" /></p>
+<h6 id="thread-block-clusters">Thread Block Clusters</h6>
+<p>a group of thread blocks, organized by <strong>adjacent</strong> blocks in a grid, offers some synchronization and communications</p>
+<p>Specifically, A cluster is executed in a single GPC</p>
+<p>Threads in different block but in the same cluster can sync &amp; comm by Cooperative Groups</p>
+<p>Now assume T is Thread, C is Cluster, B is block, G is Grid, </p>
+<p>Ts in a C but different B can communicate and synchronize by interfaces provided by Cooperative Groups and access their shared memory -- distributed shared memory.</p>
+<p>cluster size is determined by HW of GPU.</p>
+<h6 id="warp-simt">Warp &amp; SIMT</h6>
+<p>In a B, Ts are organized into groups of 32 Ts called Warp. Now W is Warp.</p>
+<p>Ts in W execute the same codes by Single-Instruction Multiple-Threads (SIMT)</p>
+<p>T has a W id, 0-31. </p>
+<p>The way that Ts into W is <strong>predictable</strong> (?) cited <a href="https://docs.nvidia.com/cuda/cuda-programming-guide/03-advanced/advanced-kernel-programming.html#advanced-kernels-hardware-implementation-hardware-multithreading">Hardware Multithreading</a>.</p>
+<p>Control flow branch may causes some Ts in W masked off, as the fig follows.</p>
+<p><img alt="Warp lanes are masked off when not active%" src="https://picgo-picbed-buxin.oss-cn-hangzhou.aliyuncs.com/picgo/active-warp-lanes.png" /></p>
+<p>CUDA cannot see Warp.</p>
+<p>helpful for  <a href="https://docs.nvidia.com/cuda/cuda-programming-guide/02-basics/writing-cuda-kernels.html#writing-cuda-kernels-coalesced-global-memory-access">global memory coalescing</a> and <a href="https://docs.nvidia.com/cuda/cuda-programming-guide/02-basics/writing-cuda-kernels.html#writing-cuda-kernels-shared-memory-access-patterns">shared memory bank access patterns</a>.</p>
+<p>The num of Ts in a B better are a multiple of 32 (Ts size in a W).</p>
+<h4 id="123-gpu-memory">1.2.3 GPU Memory</h4>
+<h5 id="1231-dram-memory-in-heterogeneous-systems">1.2.3.1 DRAM Memory in Heterogeneous Systems</h5>
+<p>System Memory = Host Memory = CPU DRAM</p>
+<p>GPU DRAM = Global Memory, accessible to all SMs.</p>
+<p>Virtual Memory in GPU: can recognize which GPU, whether in GPU memory or CPU memory</p>
+<p>There are lots of API for memory control.</p>
+<p>CUDA can use Unified Memory -- a mechanism, to automatically handling the placement of memory in the runtime.</p>
+<h5 id="1232-gpu-on-chip-memory">1.2.3.2 GPU on-chip Memory</h5>
+<p>Reg files (for temp variables) + shared memory (can be used for data exchange in Block &amp; Cluster)</p>
+<p>on-chip Memory is shared by all Ts in a B.</p>
+<p>However, the Reg files is allocated to Ts while the Shared memory is allocated to Bs.</p>
+<h6 id="caches"><strong>Caches</strong></h6>
+<p>L1 is from shared memory, L2 is for all SMs in GPU, <strong>constant cache</strong> is for constant variables in global memory.</p>
+<h5 id="1233-unified-memory">1.2.3.3 Unified Memory</h5>
+<blockquote>
+<p>Section <a href="https://docs.nvidia.com/cuda/cuda-programming-guide/02-basics/understanding-memory.html#memory-unified-memory">Unified Memory</a> introduces the different categories of unified memory systems. Section <a href="https://docs.nvidia.com/cuda/cuda-programming-guide/04-special-topics/unified-memory.html#um-details-intro">Unified Memory</a> contains many more details about use and behavior of unified memory in all situations.</p>
+</blockquote>
+<p>CPU codes only access CPU memory while GPU kernels only access GPU memory in addition to mapped memory.</p>
+<p>CUDA APIs work for the data copies between them.</p>
+<h3 id="13-the-cuda-platform">1.3 The CUDA Platform</h3>
+<h4 id="131-compute-capability-cc-sm-versions">1.3.1. Compute Capability (CC)  &amp; SM Versions</h4>
+<p>GPU has a CC number documented in the  <a href="https://docs.nvidia.com/cuda/cuda-programming-guide/05-appendices/compute-capabilities.html#compute-capabilities">Section 5.1</a> appendix, looking like X.Y</p>
+<p>E.g: CC 12.0 - sm_120</p>
+<h4 id="132-cuda-toolkit-nv-driver">1.3.2. CUDA Toolkit &amp; NV Driver</h4>
+<p>Nvidia Driver = GPU OS</p>
+<p>CUDA Toolkit = Lib + Headers + Tools</p>
+<p>CUDA runtime = one Library of CUDA Toolkit</p>
+<blockquote>
+<p>About <strong>Compatibility</strong>: The <a href="https://docs.nvidia.com/deploy/cuda-compatibility/index.html">CUDA Compatibility</a> document provides full details of compatibility between different GPUs, NVIDIA Drivers, and CUDA Toolkit versions.</p>
+</blockquote>
+<p>Driver API covers the CUDA Runtime API</p>
+<blockquote>
+<p>The full API reference for the CUDA runtime API functions can be found in the <a href="https://docs.nvidia.com/cuda/cuda-runtime-api/index.html">CUDA Runtime API Documentation</a> .</p>
+</blockquote>
+<h4 id="133-parallel-thread-execution-ptx">1.3.3. Parallel Thread Execution (PTX)</h4>
+<p>PTX is an invisible virtual instruction set architecture, which aligns with SM Versions.</p>
+<blockquote>
+<p>Full documentation on PTX can be found in the <a href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html">PTX ISA</a> .</p>
+</blockquote>
+<h4 id="134-cubins-fatbins">1.3.4 Cubins &amp; Fatbins</h4>
+<p>Cubin: CUDA binary for physical GPU.</p>
+<p>Fatbin: a container of mutiple versions of cubins &amp; PTX</p>
+<p><img alt="Fatbin containers within executables or libraries can contain multiple GPU code versions" src="https://picgo-picbed-buxin.oss-cn-hangzhou.aliyuncs.com/picgo/fatbin.png" /></p>
+<h5 id="1341-binary-compatibility">1.3.4.1. Binary Compatibility</h5>
+<ol>
+<li>
+<p>a cubin's version is CC8.6, then GPU with 8.x where x &gt;= 6 can execute while GPU with 8.x where x &lt; 6 cannot.</p>
+</li>
+<li>
+<p>Where X.Y, different X is not coampatible.</p>
+</li>
+</ol>
+<h5 id="1342-ptx-compatibility">1.3.4.2. PTX Compatibility</h5>
+<p>In fatbins, if PTX is compute_80, it can be JIT compiled at application runtime for any CC equal or higher to the CC of the PTX code (such as sm_120).</p>
+<h5 id="1343-just-in-time-compilation">1.3.4.3. Just-in-Time Compilation</h5>
+<p>NVRTC can be used to compile CUDA C++ device code to PTX at runtime.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": [], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../../javascripts/config.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>
