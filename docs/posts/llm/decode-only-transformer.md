@@ -177,9 +177,9 @@ The V will be divided to `[h, L, d_h]` align with the Q and K. And the Attention
 
 **For GQA:**
 
-To optimize the memory consumption of KV cache. GQA choose to store less heads of V and distribute them to different groups of attention weights
+To optimize the memory consumption of KV cache. GQA choose to store less heads of  $K$ & $V$ and distribute them to different groups of attention weights
 
-For example, if we have 8 heads, and we want to distribute them to 2 groups. Then we will have 4 heads in each group. Instead of storing 8 heads of V, we will store 2 heads of V for 2 groups and 4 heads of attention weights in each group.
+For example, if we have 8 heads, and we want to distribute them to 2 groups. Then we will have 4 heads in each group. Instead of storing 8 heads of $KV$, we will store 2 heads of $KV$ for 2 groups and 4 heads of $Q$ in each group.
 
 ### 3.1.2. Head Concatenation
 
